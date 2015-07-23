@@ -232,10 +232,18 @@ action :change_cluster_node_type do
 
   Chef::Application.fatal!('rabbitmq_cluster with action :join requires a non-nil/empty cluster_nodes.') if new_resource.cluster_nodes.nil? || new_resource.cluster_nodes.empty?
 
+  Chef::Log.warn('getting cluster status')
   var_cluster_status = cluster_status
+  Chef::Log.warn('done')
+  Chef::Log.warn('getting node name')
   var_node_name = node_name
+  Chef::Log.warn('done')
+  Chef::Log.warn('getting current cluster node type')
   var_current_cluster_node_type = current_cluster_node_type(var_node_name, var_cluster_status)
+  Chef::Log.warn('done')
+  Chef::Log.warn('getting cluster node type')
   var_cluster_node_type = parse_cluster_nodes_string(new_resource.cluster_nodes).each { |node| node['name'] == var_node_name }.first['type'] # ~FC039
+  Chef::Log.warn('done')
 
   if var_current_cluster_node_type == var_cluster_node_type
     Chef::Log.warn('[rabbitmq_cluster] Skip changing cluster node type : trying to change to same cluster node type')
